@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { Height } from '@mui/icons-material';
 
 const buttonStyle = {
   backgroundColor: '#3b5a82',
@@ -15,8 +14,9 @@ const buttonStyle = {
   justifyContent: 'center',
   cursor: 'pointer',
   transition: 'background-color 0.3s',
-  width: '225px',
-  height: '90px',
+  width: '100%',
+  maxWidth: '300px',
+  height: '150px',
   margin: '10px auto',
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 };
