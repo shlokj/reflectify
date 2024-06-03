@@ -1,6 +1,6 @@
 import React from "react";
 import { auth, provider, signInWithPopup } from "../firebase";
-import { Button } from "@mui/material";
+import { Button, Box } from "@mui/material";
 import { Google as GoogleIcon } from "@mui/icons-material";
 
 const SignIn = () => {
@@ -20,11 +20,27 @@ const SignIn = () => {
     <Button
       variant="contained"
       color="primary"
-      startIcon={<GoogleIcon />}
-      style={{ backgroundColor: "#4285F4", color: "#fff" }}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        backgroundColor: "#4285F4",
+        color: "#fff",
+        borderRadius: "50px",
+        padding: "20px 60px", // Increased padding
+        fontSize: "24px", // Increased font size
+        textTransform: "none",
+        "&:hover": {
+          backgroundColor: "#357ae8",
+        },
+      }}
       onClick={signInWithGoogle}
     >
-      Sign in with Google
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <GoogleIcon
+          sx={{ fontSize: "48px", marginRight: "16px", marginLeft: "-24px" }}
+        />
+        Sign in with Google
+      </Box>
     </Button>
   );
 };

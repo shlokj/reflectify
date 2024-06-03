@@ -8,7 +8,7 @@ import Header from '../components/Header';
 
 export default function HomePage() {
   const handleUploadMemoriesClick = () => {
-    console.log('Upload Memories clicked');
+    console.log("Upload Memories clicked");
   };
 
   const handleLetsPlayClick = () => {
@@ -16,7 +16,7 @@ export default function HomePage() {
   };
 
   const handleTimelineClick = () => {
-    console.log('Timeline clicked');
+    console.log("Timeline clicked");
   };
 
   return (
@@ -24,7 +24,7 @@ export default function HomePage() {
       <Header isLoggedIn={true} userName='<username>' />
       <ButtonComponent
         icon={<CloudUploadIcon sx={{ fontSize: 60 }} />}
-        label='Upload Memories'
+        label="Upload Memories"
         onClick={handleUploadMemoriesClick}
       />
       <ButtonComponent
@@ -34,7 +34,7 @@ export default function HomePage() {
       />
       <ButtonComponent
         icon={<TimelineIcon sx={{ fontSize: 60 }} />}
-        label='Timeline'
+        label="Timeline"
         onClick={handleTimelineClick}
       />
     </Container>
