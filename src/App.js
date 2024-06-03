@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Button, Grid, Typography } from "@mui/material";
 import { Google as GoogleIcon } from "@mui/icons-material";
+import SignIn from "./components/SignInButton";
 
 const App = () => {
   return (
@@ -64,17 +65,7 @@ const App = () => {
             alignItems="center"
             justifyContent="center"
           >
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<GoogleIcon />}
-              style={{ backgroundColor: "#4285F4", color: "#fff" }}
-              onClick={() =>
-                (window.location.href = "https://your-google-sign-in-url")
-              }
-            >
-              Sign in with Google
-            </Button>
+            <SignIn />
           </Grid>
         </Grid>
       </Box>
