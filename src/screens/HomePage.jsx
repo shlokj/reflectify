@@ -1,13 +1,13 @@
-import React from 'react';
-import { Container } from '@mui/material';
-import ButtonComponent from '../components/ButtonComponent';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import ExtensionIcon from '@mui/icons-material/Extension';
-import TimelineIcon from '@mui/icons-material/Timeline';
+import React from "react";
+import { Container } from "@mui/material";
+import ButtonComponent from "../components/ButtonComponent";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import ExtensionIcon from "@mui/icons-material/Extension";
+import TimelineIcon from "@mui/icons-material/Timeline";
 
 export default function HomePage() {
   const handleUploadMemoriesClick = () => {
-    console.log('Upload Memories clicked');
+    console.log("Upload Memories clicked");
   };
 
   const handleLetsPlayClick = () => {
@@ -15,14 +15,14 @@ export default function HomePage() {
   };
 
   const handleTimelineClick = () => {
-    console.log('Timeline clicked');
+    console.log("Timeline clicked");
   };
 
   return (
     <Container>
       <ButtonComponent
         icon={<CloudUploadIcon sx={{ fontSize: 60 }} />}
-        label='Upload Memories'
+        label="Upload Memories"
         onClick={handleUploadMemoriesClick}
       />
       <ButtonComponent
@@ -32,7 +32,7 @@ export default function HomePage() {
       />
       <ButtonComponent
         icon={<TimelineIcon sx={{ fontSize: 60 }} />}
-        label='Timeline'
+        label="Timeline"
         onClick={handleTimelineClick}
       />
     </Container>
