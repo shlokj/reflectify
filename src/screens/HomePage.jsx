@@ -4,6 +4,7 @@ import ButtonComponent from '../components/ButtonComponent';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ExtensionIcon from '@mui/icons-material/Extension';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import Header from '../components/Header';
 
 export default function HomePage() {
   const handleUploadMemoriesClick = () => {
@@ -20,6 +21,7 @@ export default function HomePage() {
 
   return (
     <Container>
+      <Header isLoggedIn={true} userName='<username>' />
       <ButtonComponent
         icon={<CloudUploadIcon sx={{ fontSize: 60 }} />}
         label='Upload Memories'
