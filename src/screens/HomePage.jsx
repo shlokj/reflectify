@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from '@mui/material';
-import ButtonComponent from '../components/ButtonComponent';
+import MainButtonComponent from '../components/MainButtonComponent';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ExtensionIcon from '@mui/icons-material/Extension';
 import TimelineIcon from '@mui/icons-material/Timeline';
@@ -31,17 +31,17 @@ export default function HomePage() {
             <ReflectComponent />
           </Grid>
           <Grid item xs={4}>
-            <ButtonComponent
+            <MainButtonComponent
               icon={<CloudUploadIcon sx={{ fontSize: 60 }} />}
               label='Upload Memories'
               onClick={handleUploadMemoriesClick}
             />
-            <ButtonComponent
+            <MainButtonComponent
               icon={<ExtensionIcon sx={{ fontSize: 60 }} />}
               label="Let's Play"
               onClick={handleLetsPlayClick}
             />
-            <ButtonComponent
+            <MainButtonComponent
               icon={<TimelineIcon sx={{ fontSize: 60 }} />}
               label='Timeline'
               onClick={handleTimelineClick}

@@ -30,7 +30,7 @@ const buttonLabelStyle = {
   marginLeft: '15px',
 };
 
-export default function ButtonComponent({ icon, label, onClick }) {
+export default function MainButtonComponent({ icon, label, onClick }) {
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
       <button style={buttonStyle} onClick={onClick}>
