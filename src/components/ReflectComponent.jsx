@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, TextField } from "@mui/material";
+import { Box, Typography, Grid, TextField, CircularProgress, Button } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from "@mui/icons-material/Done";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import SmallButtonComponent from "./SmallButtonComponent";
 import Stack from "@mui/material/Stack";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 
-export default function ReflectComponent() {
+export default function ReflectComponent({ prompt, imageUrl, loading, onKeepJournaling }) {
   const [reflection, setReflection] = useState("");
-
-  const handleEditClick = () => {
-    console.log("Edit your reflection");
-  };
+  const [submitted, setSubmitted] = useState(false);
 
   const handleDoneClick = async () => {
     try {
@@ -22,10 +19,16 @@ export default function ReflectComponent() {
         timestamp: new Date(),
       });
       console.log("Reflection submitted successfully");
-      setReflection("");
+      setSubmitted(true);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
+  };
+
+  const handleKeepJournalingClick = () => {
+    setSubmitted(false);
+    onKeepJournaling(reflection);
+    setReflection("");
   };
 
   return (
@@ -50,72 +53,117 @@ export default function ReflectComponent() {
         >
           Let's Reflect
         </Typography>
-        <Grid
-          container
-          sx={{
-            marginTop: "10px",
-            paddingRight: "10px",
-            paddingLeft: "10px",
-            marginBottom: "10px",
-          }}
-          spacing={1}
-        >
-          <Grid
-            item
-            xs={6}
-            md={5}
+        {loading ? (
+          <Box
             sx={{
               display: "flex",
-              alignItems: "center",
               justifyContent: "center",
-              overflow: "hidden",
+              alignItems: "center",
+              height: "100%",
             }}
           >
-            <img
-              src={"https://images.unsplash.com/photo-1549388604-817d15aa0110"}
-              alt={"bed"}
-              style={{
-                width: "100%",
-                height: "auto",
-                borderRadius: "8px",
+            <CircularProgress />
+          </Box>
+        ) : (
+          submitted ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
               }}
-            />
-          </Grid>
-          <Grid item xs={6} md={7}>
-            <TextField
-              id="outlined-multiline-flexible"
-              label="Tell us about this day and moment."
-              fullWidth
-              multiline
-              maxRows={15}
-              value={reflection}
-              onChange={(e) => setReflection(e.target.value)}
-              sx={{ height: "375px" }}
-              InputProps={{
-                sx: {
-                  height: "100%",
-                  alignItems: "flex-start",
-                },
-              }}
-            />
-            <Stack
-              direction="row"
-              spacing={2}
-              sx={{ justifyContent: "center" }}
             >
-              <SmallButtonComponent
-                icon={<EditIcon sx={{ fontSize: 40 }} />}
-                label="Edit"
-                onClick={handleEditClick}
-              />
-              <SmallButtonComponent
-                icon={<DoneIcon sx={{ fontSize: 40 }} />}
-                label="Done"
-                onClick={handleDoneClick}
-              />
-            </Stack>
-          </Grid>
-        </Grid>
+              <CheckCircleIcon sx={{ fontSize: 80, color: "green" }} />
+              <Typography
+                variant="h5"
+                sx={{
+                  marginTop: "20px",
+                  marginBottom: "20px",
+                  color: "#3b5a82",
+                }}
+              >
+                Reflection Saved!
+              </Typography>
+              <Button variant="contained" onClick={handleKeepJournalingClick}>
+                Keep Journaling
+              </Button>
+            </Box>
+          ) : (
+            <Grid
+              container
+              sx={{
+                marginTop: "10px",
+                paddingRight: "10px",
+                paddingLeft: "10px",
+                marginBottom: "10px",
+              }}
+              spacing={1}
+            >
+              <Grid
+                item
+                xs={6}
+                md={5}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={imageUrl || "https://images.unsplash.com/photo-1549388604-817d15aa0110"}
+                  alt={"Reflection"}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    borderRadius: "8px",
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6} md={7}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: "bold",
+                    marginBottom: "10px",
+                    color: "#3b5a82",
+                  }}
+                >
+                  {prompt}
+                </Typography>
+                <TextField
+                  id="outlined-multiline-flexible"
+                  label="Journal here..."
+                  fullWidth
+                  multiline
+                  maxRows={15}
+                  value={reflection}
+                  onChange={(e) => setReflection(e.target.value)}
+                  sx={{ height: "375px" }}
+                  InputProps={{
+                    sx: {
+                      height: "100%",
+                      alignItems: "flex-start",
+                    },
+                  }}
+                />
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{ justifyContent: "center" }}
+                >
+                  <SmallButtonComponent
+                    icon={<DoneIcon sx={{ fontSize: 40 }} />}
+                    label="Done"
+                    onClick={handleDoneClick}
+                  />
+                </Stack>
+              </Grid>
+            </Grid>
+          )
+        )}
       </Paper>
     </Box>
   );

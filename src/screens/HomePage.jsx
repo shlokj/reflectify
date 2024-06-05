@@ -9,12 +9,22 @@ import ReflectComponent from "../components/ReflectComponent";
 import Grid from "@mui/material/Grid";
 import { storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: 'open-api-key',
+  dangerouslyAllowBrowser: true,
+});
 
 export default function HomePage() {
   const [isBucketEmpty, setIsBucketEmpty] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [urls, setUrls] = useState([]);
+  const [prompt, setPrompt] = useState("");
+  const [currentImage, setCurrentImage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [previousJournal, setPreviousJournal] = useState("");
 
   const handleFileChange = async (event) => {
     const files = event.target.files;
@@ -50,10 +60,79 @@ export default function HomePage() {
         setUrls((prevUrls) => [...prevUrls, ...downloadURLs]);
         setIsBucketEmpty(false);
         setUploading(false);
+        setLoading(true);
+        const selectedImages = selectRandomImages(downloadURLs, 3);
+        const mostInterestingImage = await analyzeImages(selectedImages);
+        setCurrentImage(mostInterestingImage);
+        generatePrompt(mostInterestingImage);
       } catch (error) {
         console.error("Error uploading files:", error);
         setUploading(false);
       }
+    }
+  };
+
+  const selectRandomImages = (urls, count) => {
+    const shuffled = urls.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  };
+
+  const analyzeImages = async (images) => {
+    const responses = await Promise.all(images.map(async (image) => {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: "What’s in this image?" },
+              {
+                type: "image_url",
+                image_url: { url: image },
+              },
+            ],
+          },
+        ],
+      });
+      return response.choices[0].message.content;
+    }));
+
+    let maxLength = 0;
+    let mostInterestingImage = images[0];
+    responses.forEach((description, index) => {
+      if (description.length > maxLength) {
+        maxLength = description.length;
+        mostInterestingImage = images[index];
+      }
+    });
+    return mostInterestingImage;
+  };
+
+  const generatePrompt = async (imageUrl) => {
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: "Generate 1-3 line prompt for journaling based on this image. Don't output **prompt**" },
+              {
+                type: "image_url",
+                image_url: { url: imageUrl },
+              },
+              previousJournal && { type: "text", text: `Context: ${previousJournal}` }
+            ].filter(Boolean),
+          },
+        ],
+      });
+
+      const generatedPrompt = response.choices[0].message.content;
+      setPrompt(generatedPrompt);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error generating prompt:", error);
+      setLoading(false);
     }
   };
 
@@ -67,6 +146,16 @@ export default function HomePage() {
 
   const handleTimelineClick = () => {
     console.log("Timeline clicked");
+  };
+
+  const handleKeepJournaling = async (reflection) => {
+    setPreviousJournal(reflection);
+    setLoading(true);
+    const remainingImages = urls.filter(url => url !== currentImage);
+    const selectedImages = selectRandomImages(remainingImages, 3);
+    const mostInterestingImage = await analyzeImages(selectedImages);
+    setCurrentImage(mostInterestingImage);
+    generatePrompt(mostInterestingImage);
   };
 
   return (
@@ -89,7 +178,7 @@ export default function HomePage() {
               opacity: isBucketEmpty ? 0.5 : 1,
             }}
           >
-            <ReflectComponent />
+            <ReflectComponent prompt={prompt} imageUrl={currentImage} loading={loading} onKeepJournaling={handleKeepJournaling} />
           </Grid>
           <Grid item xs={4}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
