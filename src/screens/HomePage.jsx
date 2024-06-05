@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, CircularProgress, Box } from "@mui/material";
 import MainButtonComponent from "../components/MainButtonComponent";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -9,14 +9,28 @@ import ReflectComponent from "../components/ReflectComponent";
 import Grid from "@mui/material/Grid";
 import { storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useNavigate } from "react-router";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: 'open-api-key',
+  apiKey: "open-api-key",
   dangerouslyAllowBrowser: true,
 });
 
 export default function HomePage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigate("/");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
   const [isBucketEmpty, setIsBucketEmpty] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -78,24 +92,26 @@ export default function HomePage() {
   };
 
   const analyzeImages = async (images) => {
-    const responses = await Promise.all(images.map(async (image) => {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: "What’s in this image?" },
-              {
-                type: "image_url",
-                image_url: { url: image },
-              },
-            ],
-          },
-        ],
-      });
-      return response.choices[0].message.content;
-    }));
+    const responses = await Promise.all(
+      images.map(async (image) => {
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: "What’s in this image?" },
+                {
+                  type: "image_url",
+                  image_url: { url: image },
+                },
+              ],
+            },
+          ],
+        });
+        return response.choices[0].message.content;
+      })
+    );
 
     let maxLength = 0;
     let mostInterestingImage = images[0];
@@ -116,12 +132,18 @@ export default function HomePage() {
           {
             role: "user",
             content: [
-              { type: "text", text: "Generate 1-3 line prompt for journaling based on this image. Don't output **prompt**" },
+              {
+                type: "text",
+                text: "Generate 1-3 line prompt for journaling based on this image. Don't output **prompt**",
+              },
               {
                 type: "image_url",
                 image_url: { url: imageUrl },
               },
-              previousJournal && { type: "text", text: `Context: ${previousJournal}` }
+              previousJournal && {
+                type: "text",
+                text: `Context: ${previousJournal}`,
+              },
             ].filter(Boolean),
           },
         ],
@@ -151,7 +173,7 @@ export default function HomePage() {
   const handleKeepJournaling = async (reflection) => {
     setPreviousJournal(reflection);
     setLoading(true);
-    const remainingImages = urls.filter(url => url !== currentImage);
+    const remainingImages = urls.filter((url) => url !== currentImage);
     const selectedImages = selectRandomImages(remainingImages, 3);
     const mostInterestingImage = await analyzeImages(selectedImages);
     setCurrentImage(mostInterestingImage);
@@ -178,7 +200,12 @@ export default function HomePage() {
               opacity: isBucketEmpty ? 0.5 : 1,
             }}
           >
-            <ReflectComponent prompt={prompt} imageUrl={currentImage} loading={loading} onKeepJournaling={handleKeepJournaling} />
+            <ReflectComponent
+              prompt={prompt}
+              imageUrl={currentImage}
+              loading={loading}
+              onKeepJournaling={handleKeepJournaling}
+            />
           </Grid>
           <Grid item xs={4}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
