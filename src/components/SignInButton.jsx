@@ -26,8 +26,8 @@ const SignIn = () => {
         backgroundColor: "#4285F4",
         color: "#fff",
         borderRadius: "50px",
-        padding: "20px 60px", // Increased padding
-        fontSize: "24px", // Increased font size
+        padding: "20px 60px",
+        fontSize: "24px",
         textTransform: "none",
         "&:hover": {
           backgroundColor: "#357ae8",

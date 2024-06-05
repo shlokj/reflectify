@@ -1,21 +1,65 @@
-import React, { useState } from 'react';
-import { Container } from '@mui/material';
-import MainButtonComponent from '../components/MainButtonComponent';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import ExtensionIcon from '@mui/icons-material/Extension';
-import TimelineIcon from '@mui/icons-material/Timeline';
-import Header from '../components/Header';
-import ReflectComponent from '../components/ReflectComponent';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
+import React, { useState } from "react";
+import { Container, CircularProgress } from "@mui/material";
+import MainButtonComponent from "../components/MainButtonComponent";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import ExtensionIcon from "@mui/icons-material/Extension";
+import TimelineIcon from "@mui/icons-material/Timeline";
+import Header from "../components/Header";
+import ReflectComponent from "../components/ReflectComponent";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import { storage } from "../firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export default function HomePage() {
-  // function to check if user's storage bucket is empty. if it is, everything is greyed out
   const [isBucketEmpty, setIsBucketEmpty] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [urls, setUrls] = useState([]);
+
+  const handleFileChange = async (event) => {
+    const files = event.target.files;
+    if (files.length > 0) {
+      setUploading(true);
+
+      const uploadPromises = Array.from(files).map((file) => {
+        const storageRef = ref(storage, `images/${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        return new Promise((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setProgress(progress);
+            },
+            (error) => {
+              console.error(error);
+              reject(error);
+            },
+            async () => {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve(downloadURL);
+            }
+          );
+        });
+      });
+
+      try {
+        const downloadURLs = await Promise.all(uploadPromises);
+        setUrls((prevUrls) => [...prevUrls, ...downloadURLs]);
+        setIsBucketEmpty(false);
+        setUploading(false);
+      } catch (error) {
+        console.error("Error uploading files:", error);
+        setUploading(false);
+      }
+    }
+  };
 
   const handleUploadMemoriesClick = () => {
-    console.log('Upload Memories clicked');
-    // use setIsBucketEmpty to set false
+    document.getElementById("fileInput").click();
   };
 
   const handleLetsPlayClick = () => {
@@ -23,32 +67,43 @@ export default function HomePage() {
   };
 
   const handleTimelineClick = () => {
-    console.log('Timeline clicked');
+    console.log("Timeline clicked");
   };
 
   return (
     <Container>
-      <Header isLoggedIn={true} userName='<username>' />
+      <Header isLoggedIn={true} userName="<username>" />
       <Box>
+        <input
+          id="fileInput"
+          type="file"
+          multiple
+          onChange={handleFileChange}
+          style={{ display: "none" }}
+        />
         <Grid container marginTop={10}>
           <Grid
             item
             xs={8}
             sx={{
-              pointerEvents: isBucketEmpty ? 'none' : 'auto',
+              pointerEvents: isBucketEmpty ? "none" : "auto",
               opacity: isBucketEmpty ? 0.5 : 1,
             }}
           >
             <ReflectComponent />
           </Grid>
           <Grid item xs={4}>
-            <MainButtonComponent
-              icon={<CloudUploadIcon sx={{ fontSize: 60 }} />}
-              label={
-                isBucketEmpty ? 'Upload Memories To Start' : 'Upload Memories'
-              }
-              onClick={handleUploadMemoriesClick}
-            />
+            {uploading ? (
+              <CircularProgress variant="determinate" value={progress} />
+            ) : (
+              <MainButtonComponent
+                icon={<CloudUploadIcon sx={{ fontSize: 60 }} />}
+                label={
+                  isBucketEmpty ? "Upload Memories To Start" : "Upload Memories"
+                }
+                onClick={handleUploadMemoriesClick}
+              />
+            )}
             <MainButtonComponent
               icon={<ExtensionIcon sx={{ fontSize: 60 }} />}
               label="Let's Play"
@@ -57,7 +112,7 @@ export default function HomePage() {
             />
             <MainButtonComponent
               icon={<TimelineIcon sx={{ fontSize: 60 }} />}
-              label='Timeline'
+              label="Timeline"
               onClick={handleTimelineClick}
               disabled={isBucketEmpty}
             />
