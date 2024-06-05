@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Container, CircularProgress } from "@mui/material";
+import { Container, CircularProgress, Box } from "@mui/material";
 import MainButtonComponent from "../components/MainButtonComponent";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ExtensionIcon from "@mui/icons-material/Extension";
 import TimelineIcon from "@mui/icons-material/Timeline";
 import Header from "../components/Header";
 import ReflectComponent from "../components/ReflectComponent";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -93,29 +92,46 @@ export default function HomePage() {
             <ReflectComponent />
           </Grid>
           <Grid item xs={4}>
-            {uploading ? (
-              <CircularProgress variant="determinate" value={progress} />
-            ) : (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {uploading ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: 100,
+                  }}
+                >
+                  <CircularProgress
+                    variant="determinate"
+                    value={progress}
+                    size={60}
+                  />
+                </Box>
+              ) : (
+                <MainButtonComponent
+                  icon={<CloudUploadIcon sx={{ fontSize: 60 }} />}
+                  label={
+                    isBucketEmpty
+                      ? "Upload Memories To Start"
+                      : "Upload Memories"
+                  }
+                  onClick={handleUploadMemoriesClick}
+                />
+              )}
               <MainButtonComponent
-                icon={<CloudUploadIcon sx={{ fontSize: 60 }} />}
-                label={
-                  isBucketEmpty ? "Upload Memories To Start" : "Upload Memories"
-                }
-                onClick={handleUploadMemoriesClick}
+                icon={<ExtensionIcon sx={{ fontSize: 60 }} />}
+                label="Let's Play"
+                onClick={handleLetsPlayClick}
+                disabled={isBucketEmpty}
               />
-            )}
-            <MainButtonComponent
-              icon={<ExtensionIcon sx={{ fontSize: 60 }} />}
-              label="Let's Play"
-              onClick={handleLetsPlayClick}
-              disabled={isBucketEmpty}
-            />
-            <MainButtonComponent
-              icon={<TimelineIcon sx={{ fontSize: 60 }} />}
-              label="Timeline"
-              onClick={handleTimelineClick}
-              disabled={isBucketEmpty}
-            />
+              <MainButtonComponent
+                icon={<TimelineIcon sx={{ fontSize: 60 }} />}
+                label="Timeline"
+                onClick={handleTimelineClick}
+                disabled={isBucketEmpty}
+              />
+            </Box>
           </Grid>
         </Grid>
       </Box>
