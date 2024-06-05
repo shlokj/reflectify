@@ -34,14 +34,16 @@ const buttonLabelStyle = {
   marginLeft: '15px',
 };
 
-export function TimerComponent() {
+export function TimerComponent({ timeLeft }) {
+  const timerButtonLabelStyle = { marginLeft: '10px' };
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
-      <button style={buttonStyle}>
+      <button style={buttonStyle} disabled>
         <div style={buttonContentStyle}>
           <TimerIcon sx={{ fontSize: 60 }} />
-          <span style={buttonLabelStyle}>{'xyz left'}</span>
-          {/* replace xyz with timer count */}
+          <span style={timerButtonLabelStyle}>
+            {timeLeft > 0 ? `${timeLeft} sec left` : "Time's Up"}
+          </span>
         </div>
       </button>
     </Box>
@@ -62,14 +64,22 @@ export function ScoreComponent() {
   );
 }
 
-export function SkipComponent() {
+export function SkipComponent({ isTimeUp }) {
   const skipButtonStyle = {
     ...buttonStyle,
     backgroundColor: '#AA6F6F',
   };
+  const skipButtonDisabledStyle = {
+    ...skipButtonStyle,
+    backgroundColor: '#B0BEC5',
+    cursor: 'not-allowed',
+  };
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
-      <button style={skipButtonStyle}>
+      <button
+        style={isTimeUp ? skipButtonDisabledStyle : skipButtonStyle}
+        disabled={isTimeUp}
+      >
         <div style={buttonContentStyle}>
           <SkipNextIcon sx={{ fontSize: 60 }} />
           <span style={buttonLabelStyle}>{'SKIP'}</span>
@@ -78,14 +88,23 @@ export function SkipComponent() {
     </Box>
   );
 }
-export function HintComponent() {
+
+export function HintComponent({ isTimeUp }) {
   const hintButtonStyle = {
     ...buttonStyle,
     padding: '20px',
   };
+  const hintButtonDisabledStyle = {
+    ...hintButtonStyle,
+    backgroundColor: '#B0BEC5',
+    cursor: 'not-allowed',
+  };
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
-      <button style={hintButtonStyle}>
+      <button
+        style={isTimeUp ? hintButtonDisabledStyle : hintButtonStyle}
+        disabled={isTimeUp}
+      >
         <div style={buttonContentStyle}>
           <Stack
             direction='column'
@@ -124,14 +143,14 @@ export function HintComponent() {
   );
 }
 
-export default function RapidFireButtonComponents() {
+export default function RapidFireButtonComponents({ timeLeft, isTimeUp }) {
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
       <Stack direction='column' spacing={2} sx={{ justifyContent: 'center' }}>
-        <TimerComponent />
+        <TimerComponent timeLeft={timeLeft} />
         <ScoreComponent />
-        <SkipComponent />
-        <HintComponent />
+        {/* <SkipComponent isTimeUp={isTimeUp} /> */}
+        <HintComponent isTimeUp={isTimeUp} />
       </Stack>
     </Box>
   );

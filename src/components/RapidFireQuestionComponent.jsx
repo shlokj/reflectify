@@ -1,6 +1,15 @@
 import React from 'react';
 import { Box, Typography, Grid, Paper } from '@mui/material';
 
+const paperStyle = {
+  flexGrow: 1,
+  width: '100%',
+  border: '1px solid #3C5C84',
+  borderRadius: '8px',
+  display: 'flex',
+  flexDirection: 'column',
+};
+
 const buttonStyle = {
   backgroundColor: '#3b5a82',
   border: 'none',
@@ -30,10 +39,18 @@ const buttonLabelStyle = {
   marginLeft: '12px',
 };
 
-export function AnswerOptionComponent() {
+export function AnswerOptionComponent({ isTimeUp }) {
+  const disabledButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: '#B0BEC5',
+    cursor: 'not-allowed',
+  };
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
-      <button style={buttonStyle}>
+      <button
+        style={isTimeUp ? disabledButtonStyle : buttonStyle}
+        disabled={isTimeUp}
+      >
         <div style={buttonContentStyle}>
           <span style={buttonLabelStyle}>{'value'}</span>
           {/* replace value with option value */}
@@ -43,17 +60,14 @@ export function AnswerOptionComponent() {
   );
 }
 
-export default function RapidFireQuestionComponent() {
+export default function RapidFireQuestionComponent({ isTimeUp }) {
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Paper
         sx={{
-          flexGrow: 1,
-          width: '100%',
-          border: '1px solid #3C5C84',
-          borderRadius: '8px',
-          display: 'flex',
-          flexDirection: 'column',
+          ...paperStyle,
+          pointerEvents: isTimeUp ? 'none' : 'auto',
+          opacity: isTimeUp ? 0.5 : 1,
         }}
       >
         <Box sx={{ flexGrow: 1 }}>
@@ -91,16 +105,16 @@ export default function RapidFireQuestionComponent() {
           }}
         >
           <Grid item xs={6}>
-            <AnswerOptionComponent />
+            <AnswerOptionComponent isTimeUp={isTimeUp} />
           </Grid>
           <Grid item xs={6}>
-            <AnswerOptionComponent />
+            <AnswerOptionComponent isTimeUp={isTimeUp} />
           </Grid>
           <Grid item xs={6}>
-            <AnswerOptionComponent />
+            <AnswerOptionComponent isTimeUp={isTimeUp} />
           </Grid>
           <Grid item xs={6}>
-            <AnswerOptionComponent />
+            <AnswerOptionComponent isTimeUp={isTimeUp} />
           </Grid>
         </Grid>
       </Paper>
