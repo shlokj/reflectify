@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Container, CircularProgress, Box, Grid, Typography, Button } from '@mui/material';
-import Header from '../components/Header';
-import RapidFireButtonComponents from '../components/RapidFireButtonComponents';
-import RapidFireQuestionComponent from '../components/RapidFireQuestionComponent';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebase';
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  CircularProgress,
+  Box,
+  Grid,
+  Typography,
+  Button,
+} from "@mui/material";
+import Header from "../components/Header";
+import RapidFireButtonComponents from "../components/RapidFireButtonComponents";
+import RapidFireQuestionComponent from "../components/RapidFireQuestionComponent";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: 'key',
+  apiKey: "key",
   dangerouslyAllowBrowser: true,
 });
 
@@ -37,9 +44,9 @@ const generateTriviaQuestions = async (prompts) => {
       });
 
       const questionData = JSON.parse(response.choices[0].message.content);
-      console.log('Parsed OpenAI response:', questionData); // Log the parsed response
+      console.log("Parsed OpenAI response:", questionData); // Log the parsed response
 
-      questionData.forEach(q => {
+      questionData.forEach((q) => {
         if (
           q &&
           q.question &&
@@ -53,11 +60,11 @@ const generateTriviaQuestions = async (prompts) => {
             correctOption: q.correct_option_index,
           });
         } else {
-          console.warn('Skipped invalid question:', q); // Log invalid questions
+          console.warn("Skipped invalid question:", q); // Log invalid questions
         }
       });
     } catch (error) {
-      console.error('Error generating questions:', error);
+      console.error("Error generating questions:", error);
     }
   }
 
@@ -88,23 +95,23 @@ export default function RapidFireGame() {
   useEffect(() => {
     const fetchCollection = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'reflections'));
+        const querySnapshot = await getDocs(collection(db, "reflections"));
         const docsArray = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        console.log('Fetched documents:', docsArray); // Log fetched documents for debugging
+        console.log("Fetched documents:", docsArray); // Log fetched documents for debugging
         setDocuments(docsArray);
 
         if (docsArray.length > 0) {
           const triviaQuestions = await generateTriviaQuestions(docsArray);
-          console.log('Generated questions:', triviaQuestions); // Log generated questions for debugging
+          console.log("Generated questions:", triviaQuestions); // Log generated questions for debugging
           setQuestions(triviaQuestions);
         }
         setLoading(false);
         setTimerStarted(true); // Start the timer once questions are loaded
       } catch (e) {
-        console.error('Error fetching collection: ', e);
+        console.error("Error fetching collection: ", e);
         setLoading(false);
       }
     };
@@ -135,14 +142,14 @@ export default function RapidFireGame() {
 
   return (
     <Container>
-      <Header isLoggedIn={true} userName='<username>' />
+      <Header isLoggedIn={true} userName="<username>" />
       {loading ? (
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
           }}
         >
           <CircularProgress />
@@ -152,22 +159,28 @@ export default function RapidFireGame() {
           {isTimeUp ? (
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100vh',
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100vh",
               }}
             >
               <Typography variant="h3" gutterBottom>
-                {currentQuestionIndex === questions.length ? 'Game Over!' : "Time's Up!"}
+                {currentQuestionIndex === questions.length
+                  ? "Game Over!"
+                  : "Time's Up!"}
               </Typography>
               <Typography variant="h5" gutterBottom>
-                Your Score: {score} / {questions.length}
+                Your Score: {score}
               </Typography>
               <Button
                 variant="contained"
-                sx={{ ...buttonStyle, backgroundColor: '#3b5a82', '&:active': { backgroundColor: '#2a4160' } }}
+                sx={{
+                  ...buttonStyle,
+                  backgroundColor: "#3b5a82",
+                  "&:active": { backgroundColor: "#2a4160" },
+                }}
                 onClick={handlePlayAgain}
               >
                 Play Again
@@ -185,7 +198,7 @@ export default function RapidFireGame() {
                   />
                 )}
               </Grid>
-              <Grid item xs={4} sx={{ alignContent: 'center' }}>
+              <Grid item xs={4} sx={{ alignContent: "center" }}>
                 <RapidFireButtonComponents
                   timeLeft={timeLeft}
                   score={score}
@@ -201,22 +214,21 @@ export default function RapidFireGame() {
 }
 
 const buttonStyle = {
-  backgroundColor: '#3b5a82',
-  border: 'none',
-  borderRadius: '15px',
-  color: 'white',
-  padding: '10px',
-  fontWeight: 'bold',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-  transition: 'background-color 0.3s',
-  width: '100%',
-  maxWidth: '300px',
-  height: '80px',
-  margin: '10px auto',
-  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  textAlign: 'center',
+  backgroundColor: "#3b5a82",
+  border: "none",
+  borderRadius: "15px",
+  color: "white",
+  padding: "10px",
+  fontWeight: "bold",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  transition: "background-color 0.3s",
+  width: "100%",
+  maxWidth: "300px",
+  height: "80px",
+  margin: "10px auto",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  textAlign: "center",
 };
-
