@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, CircularProgress, Box } from "@mui/material";
 import MainButtonComponent from "../components/MainButtonComponent";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -9,9 +9,6 @@ import ReflectComponent from "../components/ReflectComponent";
 import Grid from "@mui/material/Grid";
 import { storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { useNavigate } from "react-router";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
