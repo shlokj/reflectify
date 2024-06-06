@@ -15,7 +15,7 @@ import { auth } from "../firebase";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: "open-api-key",
+  apiKey: "key",
   dangerouslyAllowBrowser: true,
 });
 
