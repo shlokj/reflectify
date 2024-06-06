@@ -1,18 +1,21 @@
-import React, { useState } from "react";
-import { Container, CircularProgress, Box } from "@mui/material";
-import MainButtonComponent from "../components/MainButtonComponent";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import ExtensionIcon from "@mui/icons-material/Extension";
-import TimelineIcon from "@mui/icons-material/Timeline";
-import Header from "../components/Header";
-import ReflectComponent from "../components/ReflectComponent";
-import Grid from "@mui/material/Grid";
-import { storage } from "../firebase";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import OpenAI from "openai";
+import React, { useState, useEffect } from 'react';
+import { Container, CircularProgress, Box } from '@mui/material';
+import MainButtonComponent from '../components/MainButtonComponent';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ExtensionIcon from '@mui/icons-material/Extension';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import Header from '../components/Header';
+import ReflectComponent from '../components/ReflectComponent';
+import Grid from '@mui/material/Grid';
+import { storage } from '../firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { useNavigate } from 'react-router';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
+import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  apiKey: "key",
+  apiKey: process.env.REACT_APP_OPENAI_API_KEY,
   dangerouslyAllowBrowser: true,
 });
 
@@ -21,10 +24,10 @@ export default function HomePage() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [urls, setUrls] = useState([]);
-  const [prompt, setPrompt] = useState("");
-  const [currentImage, setCurrentImage] = useState("");
+  const [prompt, setPrompt] = useState('');
+  const [currentImage, setCurrentImage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [previousJournal, setPreviousJournal] = useState("");
+  const [previousJournal, setPreviousJournal] = useState('');
 
   const handleFileChange = async (event) => {
     const files = event.target.files;
@@ -37,7 +40,7 @@ export default function HomePage() {
 
         return new Promise((resolve, reject) => {
           uploadTask.on(
-            "state_changed",
+            'state_changed',
             (snapshot) => {
               const progress =
                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -66,7 +69,7 @@ export default function HomePage() {
         setCurrentImage(mostInterestingImage);
         generatePrompt(mostInterestingImage);
       } catch (error) {
-        console.error("Error uploading files:", error);
+        console.error('Error uploading files:', error);
         setUploading(false);
       }
     }
@@ -81,14 +84,14 @@ export default function HomePage() {
     const responses = await Promise.all(
       images.map(async (image) => {
         const response = await openai.chat.completions.create({
-          model: "gpt-4o",
+          model: 'gpt-4o',
           messages: [
             {
-              role: "user",
+              role: 'user',
               content: [
-                { type: "text", text: "What’s in this image?" },
+                { type: 'text', text: 'What’s in this image?' },
                 {
-                  type: "image_url",
+                  type: 'image_url',
                   image_url: { url: image },
                 },
               ],
@@ -113,21 +116,21 @@ export default function HomePage() {
   const generatePrompt = async (imageUrl) => {
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: 'gpt-4o',
         messages: [
           {
-            role: "user",
+            role: 'user',
             content: [
               {
-                type: "text",
+                type: 'text',
                 text: "Generate 1-3 line prompt for journaling based on this image. Don't output **prompt**",
               },
               {
-                type: "image_url",
+                type: 'image_url',
                 image_url: { url: imageUrl },
               },
               previousJournal && {
-                type: "text",
+                type: 'text',
                 text: `Context: ${previousJournal}`,
               },
             ].filter(Boolean),
@@ -139,21 +142,22 @@ export default function HomePage() {
       setPrompt(generatedPrompt);
       setLoading(false);
     } catch (error) {
-      console.error("Error generating prompt:", error);
+      console.error('Error generating prompt:', error);
       setLoading(false);
     }
   };
 
   const handleUploadMemoriesClick = () => {
-    document.getElementById("fileInput").click();
+    document.getElementById('fileInput').click();
   };
 
+  const navigate = useNavigate();
   const handleLetsPlayClick = () => {
-    console.log("Let's Play clicked");
+    navigate('/game/rapidfire');
   };
 
   const handleTimelineClick = () => {
-    console.log("Timeline clicked");
+    navigate('/timeline');
   };
 
   const handleKeepJournaling = async (reflection) => {
@@ -168,21 +172,21 @@ export default function HomePage() {
 
   return (
     <Container>
-      <Header isLoggedIn={true} userName="<username>" />
-      <Box>
+      <Header isLoggedIn={true} userName='<username>' />
+      <Box marginTop={'10px'}>
         <input
-          id="fileInput"
-          type="file"
+          id='fileInput'
+          type='file'
           multiple
           onChange={handleFileChange}
-          style={{ display: "none" }}
+          style={{ display: 'none' }}
         />
         <Grid container marginTop={10}>
           <Grid
             item
             xs={8}
             sx={{
-              pointerEvents: isBucketEmpty ? "none" : "auto",
+              pointerEvents: isBucketEmpty ? 'none' : 'auto',
               opacity: isBucketEmpty ? 0.5 : 1,
             }}
           >
@@ -194,18 +198,18 @@ export default function HomePage() {
             />
           </Grid>
           <Grid item xs={4}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {uploading ? (
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     height: 100,
                   }}
                 >
                   <CircularProgress
-                    variant="determinate"
+                    variant='determinate'
                     value={progress}
                     size={60}
                   />
@@ -215,8 +219,8 @@ export default function HomePage() {
                   icon={<CloudUploadIcon sx={{ fontSize: 60 }} />}
                   label={
                     isBucketEmpty
-                      ? "Upload Memories To Start"
-                      : "Upload Memories"
+                      ? 'Upload Memories To Start'
+                      : 'Upload Memories'
                   }
                   onClick={handleUploadMemoriesClick}
                 />
@@ -229,7 +233,7 @@ export default function HomePage() {
               />
               <MainButtonComponent
                 icon={<TimelineIcon sx={{ fontSize: 60 }} />}
-                label="Timeline"
+                label='Timeline'
                 onClick={handleTimelineClick}
                 disabled={isBucketEmpty}
               />
