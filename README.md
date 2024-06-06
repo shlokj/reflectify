@@ -16,5 +16,5 @@ Check out our journey [here](https://www.notion.so/uclahci/Project-Reflectify-An
 
 ***
 ### Demo
-insert demo vid
+Check out our demo [here](https://youtu.be/UfW1rt-MDkw)!
 
