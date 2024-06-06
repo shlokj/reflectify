@@ -231,4 +231,5 @@ const buttonStyle = {
   margin: '10px auto',
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   textAlign: 'center',
+  fontSize: '30px',
 };

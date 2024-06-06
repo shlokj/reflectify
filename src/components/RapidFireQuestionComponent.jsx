@@ -28,6 +28,7 @@ const buttonStyle = {
   margin: '10px auto',
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   textAlign: 'center',
+  fontSize: '24px',
 };
 
 const buttonContentStyle = {
@@ -49,17 +50,19 @@ const buttonLabelStyle = {
   wordWrap: 'break-word',
 };
 
-export function AnswerOptionComponent({ option, isCorrect, onClick, selected }) {
+export function AnswerOptionComponent({
+  option,
+  isCorrect,
+  onClick,
+  selected,
+}) {
   const selectedButtonStyle = {
     ...buttonStyle,
     backgroundColor: selected ? (isCorrect ? '#4caf50' : '#f44336') : '#3b5a82',
   };
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
-      <button
-        style={selectedButtonStyle}
-        onClick={onClick}
-      >
+      <button style={selectedButtonStyle} onClick={onClick}>
         <div style={buttonContentStyle}>
           <span style={buttonLabelStyle}>{option}</span>
         </div>
@@ -68,7 +71,12 @@ export function AnswerOptionComponent({ option, isCorrect, onClick, selected }) 
   );
 }
 
-export default function RapidFireQuestionComponent({ question, questionNumber, onAnswerSelection, onNextQuestion }) {
+export default function RapidFireQuestionComponent({
+  question,
+  questionNumber,
+  onAnswerSelection,
+  onNextQuestion,
+}) {
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleOptionClick = (isCorrect, index) => {
@@ -132,8 +140,13 @@ export default function RapidFireQuestionComponent({ question, questionNumber, o
               <AnswerOptionComponent
                 option={option}
                 isCorrect={index === question.correctOption}
-                onClick={() => handleOptionClick(index === question.correctOption, index)}
+                onClick={() =>
+                  handleOptionClick(index === question.correctOption, index)
+                }
                 selected={selectedOption === index}
+                sx={{
+                  fontSize: '20',
+                }}
               />
             </Grid>
           ))}
@@ -145,18 +158,27 @@ export default function RapidFireQuestionComponent({ question, questionNumber, o
             sx={{
               fontWeight: 'bold',
               textAlign: 'center',
-              marginTop: '20px',
-              color: selectedOption === question.correctOption ? 'green' : 'red',
+              marginTop: '10px',
+              color:
+                selectedOption === question.correctOption ? 'green' : 'red',
             }}
           >
-            {selectedOption === question.correctOption ? 'Correct!' : `Incorrect! The correct answer is ${question.options[question.correctOption]}`}
+            {selectedOption === question.correctOption
+              ? 'Correct!'
+              : `Incorrect! The correct answer is ${
+                  question.options[question.correctOption]
+                }`}
           </Typography>
         )}
         {selectedOption !== null && (
           <Box display='flex' justifyContent='center' marginTop='20px'>
             <Button
               variant='contained'
-              sx={{ ...buttonStyle, backgroundColor: '#3b5a82', '&:active': { backgroundColor: '#2a4160' } }}
+              sx={{
+                ...buttonStyle,
+                backgroundColor: '#3b5a82',
+                '&:active': { backgroundColor: '#2a4160' },
+              }}
               onClick={handleNextClick}
             >
               Next
