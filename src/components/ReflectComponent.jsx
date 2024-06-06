@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -6,35 +6,35 @@ import {
   TextField,
   CircularProgress,
   Button,
-} from '@mui/material';
-import Paper from '@mui/material/Paper';
-import DoneIcon from '@mui/icons-material/Done';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import SmallButtonComponent from './SmallButtonComponent';
-import Stack from '@mui/material/Stack';
-import { db } from '../firebase';
-import { collection, addDoc } from 'firebase/firestore';
+} from "@mui/material";
+import Paper from "@mui/material/Paper";
+import DoneIcon from "@mui/icons-material/Done";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import SmallButtonComponent from "./SmallButtonComponent";
+import Stack from "@mui/material/Stack";
+import { db } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 const buttonStyle = {
-  backgroundColor: '#3b5a82',
-  border: 'none',
-  borderRadius: '15px',
-  color: 'white',
-  padding: '20px 40px',
-  fontSize: '30px',
-  fontWeight: 'bold',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-  transition: 'background-color 0.3s',
-  width: '100%',
-  maxWidth: '300px',
-  height: '120px',
-  margin: '10px auto',
-  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  '&:active': {
-    backgroundColor: '#2a4160',
+  backgroundColor: "#3b5a82",
+  border: "none",
+  borderRadius: "15px",
+  color: "white",
+  padding: "20px 40px",
+  fontSize: "30px",
+  fontWeight: "bold",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  transition: "background-color 0.3s",
+  width: "100%",
+  maxWidth: "300px",
+  height: "120px",
+  margin: "10px auto",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  "&:active": {
+    backgroundColor: "#2a4160",
   },
 };
 
@@ -44,46 +44,46 @@ export default function ReflectComponent({
   loading,
   onKeepJournaling,
 }) {
-  const [reflection, setReflection] = useState('');
+  const [reflection, setReflection] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleDoneClick = async () => {
     try {
-      await addDoc(collection(db, 'reflections'), {
+      await addDoc(collection(db, "reflections"), {
         text: reflection,
         timestamp: new Date(),
       });
-      console.log('Reflection submitted successfully');
+      console.log("Reflection submitted successfully");
       setSubmitted(true);
     } catch (e) {
-      console.error('Error adding document: ', e);
+      console.error("Error adding document: ", e);
     }
   };
 
   const handleKeepJournalingClick = () => {
     setSubmitted(false);
     onKeepJournaling(reflection);
-    setReflection('');
+    setReflection("");
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <Paper
         sx={{
           flexGrow: 1,
-          width: '100%',
-          border: '1px solid #3C5C84',
-          borderRadius: '8px',
+          width: "100%",
+          border: "1px solid #3C5C84",
+          borderRadius: "8px",
         }}
       >
         <Typography
-          variant='h4'
+          variant="h4"
           gutterBottom
           sx={{
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginTop: '20px',
-            color: '#3b5a82',
+            fontWeight: "bold",
+            textAlign: "center",
+            marginTop: "20px",
+            color: "#3b5a82",
           }}
         >
           Let's Reflect
@@ -91,10 +91,10 @@ export default function ReflectComponent({
         {loading ? (
           <Box
             sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             }}
           >
             <CircularProgress />
@@ -102,27 +102,27 @@ export default function ReflectComponent({
         ) : submitted ? (
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             }}
           >
-            <CheckCircleIcon sx={{ fontSize: 100, color: '#3b5a82' }} />
+            <CheckCircleIcon sx={{ fontSize: 100, color: "#3b5a82" }} />
             <Typography
-              variant='h4'
+              variant="h4"
               sx={{
-                marginTop: '20px',
-                marginBottom: '20px',
-                color: '#3b5a82',
-                fontWeight: 'bold',
+                marginTop: "20px",
+                marginBottom: "20px",
+                color: "#3b5a82",
+                fontWeight: "bold",
               }}
             >
               Reflection Saved!
             </Typography>
             <Button
-              variant='contained'
+              variant="contained"
               onClick={handleKeepJournalingClick}
               sx={buttonStyle}
             >
@@ -134,9 +134,9 @@ export default function ReflectComponent({
             container
             sx={{
               // marginTop: '1x0px',
-              paddingRight: '10px',
-              paddingLeft: '10px',
-              marginBottom: '10px',
+              paddingRight: "10px",
+              paddingLeft: "10px",
+              marginBottom: "10px",
             }}
             spacing={1}
           >
@@ -145,19 +145,19 @@ export default function ReflectComponent({
               xs={6}
               md={12}
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
               }}
             >
               <Typography
                 // variant='h6'
                 sx={{
-                  fontWeight: 'bold',
+                  fontWeight: "bold",
                   // marginBottom: '10px',
-                  margin: '10px',
-                  color: '#3b5a82',
+                  margin: "10px",
+                  color: "#3b5a82",
                 }}
               >
                 {prompt}
@@ -168,10 +168,10 @@ export default function ReflectComponent({
               xs={6}
               md={5}
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
               }}
             >
               <img
@@ -179,44 +179,42 @@ export default function ReflectComponent({
                   imageUrl ||
                   `${process.env.PUBLIC_URL}/letsreflect_sample_image.jpeg`
                 }
-                alt={'Reflection'}
+                alt={"Reflection"}
                 style={{
-                  width: '100%',
-                  height: 'auto',
-                  borderRadius: '8px',
+                  width: "100%",
+                  height: "auto",
+                  borderRadius: "8px",
                 }}
               />
             </Grid>
             <Grid item xs={6} md={7}>
               <TextField
-                id='outlined-multiline-flexible'
-                label='Journal here...'
+                id="outlined-multiline-flexible"
+                label="Journal here..."
                 fullWidth
                 multiline
                 maxRows={15}
                 value={reflection}
                 onChange={(e) => setReflection(e.target.value)}
-                sx={{ height: '375px' }}
+                sx={{ height: "375px" }}
                 InputProps={{
                   sx: {
-                    height: '100%',
-                    alignItems: 'flex-start',
+                    height: "100%",
+                    alignItems: "flex-start",
                   },
                 }}
               />
-              <Stack
-                direction='row'
-                spacing={2}
-                sx={{ justifyContent: 'center' }}
-              >
-                <SmallButtonComponent
-                  icon={<DoneIcon sx={{ fontSize: 40 }} />}
-                  label='Done'
-                  onClick={handleDoneClick}
-                />
-              </Stack>
             </Grid>
           </Grid>
+        )}
+        {!submitted && !loading && (
+          <Stack direction="row" spacing={2} sx={{ justifyContent: "center" }}>
+            <SmallButtonComponent
+              icon={<DoneIcon sx={{ fontSize: 40 }} />}
+              label="Done"
+              onClick={handleDoneClick}
+            />
+          </Stack>
         )}
       </Paper>
     </Box>
