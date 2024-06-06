@@ -1,9 +1,7 @@
 import React from 'react';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
 import StarIcon from '@mui/icons-material/Star';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
-import LockIcon from '@mui/icons-material/Lock';
 
 const buttonStyle = {
   backgroundColor: '#3b5a82',
@@ -11,7 +9,7 @@ const buttonStyle = {
   borderRadius: '15px',
   color: 'white',
   padding: '20px 40px',
-  fontSize: '30px',
+  fontSize: 'calc(0.8em + 1vw)',
   fontWeight: 'bold',
   display: 'flex',
   alignItems: 'center',
@@ -50,107 +48,25 @@ export function TimerComponent({ timeLeft }) {
   );
 }
 
-export function ScoreComponent() {
+export function ScoreComponent({ score, totalQuestions }) {
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
       <button style={buttonStyle}>
         <div style={buttonContentStyle}>
           <StarIcon sx={{ fontSize: 60 }} />
-          <span style={buttonLabelStyle}>{' x / y'}</span>
-          {/* replace x/y with score count */}
+          <span style={buttonLabelStyle}>{`${score} / ${totalQuestions}`}</span>
         </div>
       </button>
     </Box>
   );
 }
 
-export function SkipComponent({ isTimeUp }) {
-  const skipButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#AA6F6F',
-  };
-  const skipButtonDisabledStyle = {
-    ...skipButtonStyle,
-    backgroundColor: '#B0BEC5',
-    cursor: 'not-allowed',
-  };
-  return (
-    <Box display='flex' justifyContent='center' margin='10px'>
-      <button
-        style={isTimeUp ? skipButtonDisabledStyle : skipButtonStyle}
-        disabled={isTimeUp}
-      >
-        <div style={buttonContentStyle}>
-          <SkipNextIcon sx={{ fontSize: 60 }} />
-          <span style={buttonLabelStyle}>{'SKIP'}</span>
-        </div>
-      </button>
-    </Box>
-  );
-}
-
-export function HintComponent({ isTimeUp }) {
-  const hintButtonStyle = {
-    ...buttonStyle,
-    padding: '20px',
-  };
-  const hintButtonDisabledStyle = {
-    ...hintButtonStyle,
-    backgroundColor: '#B0BEC5',
-    cursor: 'not-allowed',
-  };
-  return (
-    <Box display='flex' justifyContent='center' margin='10px'>
-      <button
-        style={isTimeUp ? hintButtonDisabledStyle : hintButtonStyle}
-        disabled={isTimeUp}
-      >
-        <div style={buttonContentStyle}>
-          <Stack
-            direction='column'
-            sx={{ justifyContent: 'center', marginRight: '20px' }}
-          >
-            <Typography
-              sx={{
-                color: 'white',
-                fontWeight: 'bold',
-                fontSize: '20px',
-                paddingTop: '3px',
-              }}
-            >
-              Hints Used:
-            </Typography>
-            <Typography
-              sx={{ color: 'white', fontWeight: 'bold', fontSize: '30px' }}
-            >
-              1/3
-            </Typography>
-          </Stack>
-          <Stack
-            direction='column'
-            sx={{ justifyContent: 'center', alignItems: 'center' }}
-          >
-            <Typography
-              sx={{ color: 'white', fontWeight: 'bold', fontSize: '20px' }}
-            >
-              Unlock Hint:
-            </Typography>
-            <LockIcon sx={{ color: 'white', fontSize: 40 }} />
-          </Stack>
-        </div>
-      </button>
-    </Box>
-  );
-}
-
-export default function RapidFireButtonComponents({ timeLeft, isTimeUp }) {
+export default function RapidFireButtonComponents({ timeLeft, score, totalQuestions }) {
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
       <Stack direction='column' spacing={2} sx={{ justifyContent: 'center' }}>
         <TimerComponent timeLeft={timeLeft} />
-        <ScoreComponent />
-        {/* <SkipComponent isTimeUp={isTimeUp} /> */}
-        <HintComponent isTimeUp={isTimeUp} />
+        <ScoreComponent score={score} totalQuestions={totalQuestions} />
       </Stack>
     </Box>
   );

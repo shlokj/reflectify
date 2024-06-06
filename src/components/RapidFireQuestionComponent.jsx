@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography, Grid, Paper } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, Grid, Paper, Button } from '@mui/material';
 
 const paperStyle = {
   flexGrow: 1,
@@ -15,8 +15,7 @@ const buttonStyle = {
   border: 'none',
   borderRadius: '15px',
   color: 'white',
-  padding: '20px 40px',
-  fontSize: '30px',
+  padding: '10px',
   fontWeight: 'bold',
   display: 'flex',
   alignItems: 'center',
@@ -25,49 +24,74 @@ const buttonStyle = {
   transition: 'background-color 0.3s',
   width: '100%',
   maxWidth: '300px',
-  height: '120px',
+  height: '80px',
   margin: '10px auto',
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  textAlign: 'center',
 };
 
 const buttonContentStyle = {
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'center',
+  textAlign: 'center',
+  height: '100%',
 };
 
 const buttonLabelStyle = {
   marginLeft: '12px',
+  fontSize: 'calc(0.5em + 0.5vw)', // Adjust font size to fit text
+  maxHeight: '100%', // Limit the maximum height of the text
+  overflow: 'hidden', // Hide overflow text
+  textOverflow: 'ellipsis', // Add ellipsis for overflow text
+  lineHeight: '1em', // Adjust line height for better readability
+  display: 'block',
+  wordWrap: 'break-word',
 };
 
-export function AnswerOptionComponent({ isTimeUp }) {
-  const disabledButtonStyle = {
+export function AnswerOptionComponent({ option, isCorrect, onClick, selected }) {
+  const selectedButtonStyle = {
     ...buttonStyle,
-    backgroundColor: '#B0BEC5',
-    cursor: 'not-allowed',
+    backgroundColor: selected ? (isCorrect ? '#4caf50' : '#f44336') : '#3b5a82',
   };
   return (
     <Box display='flex' justifyContent='center' margin='10px'>
       <button
-        style={isTimeUp ? disabledButtonStyle : buttonStyle}
-        disabled={isTimeUp}
+        style={selectedButtonStyle}
+        onClick={onClick}
       >
         <div style={buttonContentStyle}>
-          <span style={buttonLabelStyle}>{'value'}</span>
-          {/* replace value with option value */}
+          <span style={buttonLabelStyle}>{option}</span>
         </div>
       </button>
     </Box>
   );
 }
 
-export default function RapidFireQuestionComponent({ isTimeUp }) {
+export default function RapidFireQuestionComponent({ question, questionNumber, onAnswerSelection, onNextQuestion }) {
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const handleOptionClick = (isCorrect, index) => {
+    setSelectedOption(index);
+    onAnswerSelection(isCorrect);
+  };
+
+  const handleNextClick = () => {
+    setSelectedOption(null);
+    onNextQuestion();
+  };
+
+  if (!question || !question.question) {
+    return null; // Ensure we handle the case where question is undefined
+  }
+
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Paper
         sx={{
           ...paperStyle,
-          pointerEvents: isTimeUp ? 'none' : 'auto',
-          opacity: isTimeUp ? 0.5 : 1,
+          pointerEvents: 'auto',
+          opacity: 1,
         }}
       >
         <Box sx={{ flexGrow: 1 }}>
@@ -81,7 +105,7 @@ export default function RapidFireQuestionComponent({ isTimeUp }) {
               color: '#3b5a82',
             }}
           >
-            Question #
+            Question #{questionNumber}
           </Typography>
           <Typography
             variant='h4'
@@ -93,8 +117,7 @@ export default function RapidFireQuestionComponent({ isTimeUp }) {
               margin: '20px',
             }}
           >
-            question that we will ask question that we will ask question that we
-            will ask question that we will ask question that we will ask
+            {question.question}
           </Typography>
         </Box>
         <Grid
@@ -104,19 +127,42 @@ export default function RapidFireQuestionComponent({ isTimeUp }) {
             marginBottom: '20px',
           }}
         >
-          <Grid item xs={6}>
-            <AnswerOptionComponent isTimeUp={isTimeUp} />
-          </Grid>
-          <Grid item xs={6}>
-            <AnswerOptionComponent isTimeUp={isTimeUp} />
-          </Grid>
-          <Grid item xs={6}>
-            <AnswerOptionComponent isTimeUp={isTimeUp} />
-          </Grid>
-          <Grid item xs={6}>
-            <AnswerOptionComponent isTimeUp={isTimeUp} />
-          </Grid>
+          {question.options.map((option, index) => (
+            <Grid item xs={6} key={index}>
+              <AnswerOptionComponent
+                option={option}
+                isCorrect={index === question.correctOption}
+                onClick={() => handleOptionClick(index === question.correctOption, index)}
+                selected={selectedOption === index}
+              />
+            </Grid>
+          ))}
         </Grid>
+        {selectedOption !== null && (
+          <Typography
+            variant='h6'
+            gutterBottom
+            sx={{
+              fontWeight: 'bold',
+              textAlign: 'center',
+              marginTop: '20px',
+              color: selectedOption === question.correctOption ? 'green' : 'red',
+            }}
+          >
+            {selectedOption === question.correctOption ? 'Correct!' : `Incorrect! The correct answer is ${question.options[question.correctOption]}`}
+          </Typography>
+        )}
+        {selectedOption !== null && (
+          <Box display='flex' justifyContent='center' marginTop='20px'>
+            <Button
+              variant='contained'
+              sx={{ ...buttonStyle, backgroundColor: '#3b5a82', '&:active': { backgroundColor: '#2a4160' } }}
+              onClick={handleNextClick}
+            >
+              Next
+            </Button>
+          </Box>
+        )}
       </Paper>
     </Box>
   );

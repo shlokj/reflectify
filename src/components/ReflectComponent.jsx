@@ -8,6 +8,29 @@ import Stack from "@mui/material/Stack";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 
+const buttonStyle = {
+  backgroundColor: '#3b5a82',
+  border: 'none',
+  borderRadius: '15px',
+  color: 'white',
+  padding: '20px 40px',
+  fontSize: '30px',
+  fontWeight: 'bold',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  transition: 'background-color 0.3s',
+  width: '100%',
+  maxWidth: '300px',
+  height: '120px',
+  margin: '10px auto',
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  '&:active': {
+    backgroundColor: '#2a4160',
+  },
+};
+
 export default function ReflectComponent({ prompt, imageUrl, loading, onKeepJournaling }) {
   const [reflection, setReflection] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -75,18 +98,23 @@ export default function ReflectComponent({ prompt, imageUrl, loading, onKeepJour
                 height: "100%",
               }}
             >
-              <CheckCircleIcon sx={{ fontSize: 80, color: "green" }} />
+              <CheckCircleIcon sx={{ fontSize: 100, color: "#3b5a82" }} />
               <Typography
-                variant="h5"
+                variant="h4"
                 sx={{
                   marginTop: "20px",
                   marginBottom: "20px",
                   color: "#3b5a82",
+                  fontWeight: "bold",
                 }}
               >
                 Reflection Saved!
               </Typography>
-              <Button variant="contained" onClick={handleKeepJournalingClick}>
+              <Button
+                variant="contained"
+                onClick={handleKeepJournalingClick}
+                sx={buttonStyle}
+              >
                 Keep Journaling
               </Button>
             </Box>
