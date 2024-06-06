@@ -20,17 +20,6 @@ const openai = new OpenAI({
 });
 
 export default function HomePage() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        navigate("/");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
   const [isBucketEmpty, setIsBucketEmpty] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
